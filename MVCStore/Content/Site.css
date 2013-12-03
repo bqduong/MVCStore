@@ -205,6 +205,34 @@ ul#menu {
         }
 
 
+/* registerLogin
+----------------------------------------------------------*/
+ul#registerLogin {
+    font-size: 1.3em;
+    font-weight: 600;
+    margin: 0 0 5px;
+    padding: 0;
+    text-align: right;
+}
+
+    ul#registerLogin li {
+        display: inline;
+        list-style: none;
+        padding-left: 15px;
+    }
+
+        ul#registerLogin li a {
+            background: none;
+            color: #999;
+            text-decoration: none;
+        }
+
+        ul#registerLogin li a:hover {
+            color: #333;
+            text-decoration: none;
+        }
+
+
 /* page elements
 ----------------------------------------------------------*/
 /* featured */

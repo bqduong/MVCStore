@@ -2,7 +2,7 @@
 
 var Site = (function ($, Backbone, Handlebars) {
     var initializeApp = function(baseUrl) {
-        var navigationPanelView = new NavigationPanelView({ el: ".site-title" });
+        var navigationPanelView = new NavigationPanelView({ el: ".featuredModel" });
         navigationPanelView.render();
     };
 
