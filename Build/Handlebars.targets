@@ -1,0 +1,85 @@
+﻿<!--
+***********************************************************************************************
+MSBuild target to pre-compile Handlebars Templates
+***********************************************************************************************
+-->
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <CompileDependsOn>
+      CompileHandlebarsTemplates;
+      $(CompileDependsOn);
+    </CompileDependsOn>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <HandlebarsBuildConfigurations Condition="'$(HandlebarsOutputFile)' != ''">$(HandlebarsBuildConfigurations) --output &quot;$(HandlebarsOutputFile)&quot;</HandlebarsBuildConfigurations>
+    <HandlebarsBuildConfigurations Condition="'$(HandlebarsExportAMD)' == 'true'">$(HandlebarsBuildConfigurations) --amd</HandlebarsBuildConfigurations>
+    <HandlebarsBuildConfigurations Condition="'$(HandlebarsExportCommonJS)' == 'true'">$(HandlebarsBuildConfigurations) --commonjs</HandlebarsBuildConfigurations>
+    <HandlebarsBuildConfigurations Condition="'$(HandlebarsPath)' != ''">$(HandlebarsBuildConfigurations) --handlebarPath &quot;$(HandlebarsPath)&quot;</HandlebarsBuildConfigurations>
+    <HandlebarsBuildConfigurations Condition="'$(HandlebarsKnownHelpers)' == 'true'">$(HandlebarsBuildConfigurations) --known $(HandlebarsKnownHelpers)</HandlebarsBuildConfigurations>
+    <HandlebarsBuildConfigurations Condition="'$(HandlebarsKnownHelpersOnly)' == 'true'">$(HandlebarsBuildConfigurations) --knownOnly</HandlebarsBuildConfigurations>
+    <HandlebarsBuildConfigurations Condition="'$(HandlebarsMinimizeOutput)' == 'true'">$(HandlebarsBuildConfigurations) --min</HandlebarsBuildConfigurations>
+    <HandlebarsBuildConfigurations Condition="'$(HandlebarsTemplateNamespace)' != ''">$(HandlebarsBuildConfigurations) --namespace $(HandlebarsTemplateNamespace)</HandlebarsBuildConfigurations>
+    <HandlebarsBuildConfigurations Condition="'$(HandlebarsTemplateRoot)' != ''">$(HandlebarsBuildConfigurations) --root &quot;$(HandlebarsTemplateRoot)&quot;</HandlebarsBuildConfigurations>
+    <HandlebarsBuildConfigurations Condition="'$(HandlebarsTemplateExtension)' != ''">$(HandlebarsBuildConfigurations) --extension $(HandlebarsTemplateExtension)</HandlebarsBuildConfigurations>
+    <HandlebarsBuildConfigurations Condition="'$(HandlebarsAdditionalFlags)' != ''">$(HandlebarsBuildConfigurations) $(HandlebarsAdditionalFlags)</HandlebarsBuildConfigurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <HandlebarsTemplatesPath>Templates</HandlebarsTemplatesPath>
+  </PropertyGroup>
+
+  <!-- Include output file to be copied to the output directory -->
+  <ItemGroup Condition="'$(HandlebarsOutputFile)' != ''">
+    <Content Include="$(HandlebarsOutputFile)" />
+  </ItemGroup>
+
+  <!-- Detect processor architecture -->
+  <PropertyGroup>
+    <MachineProcessorArchitecture>$(registry:HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment@PROCESSOR_ARCHITECTURE)</MachineProcessorArchitecture>
+    <Is32Bit>false</Is32Bit>
+    <Is32Bit Condition="'$(MachineProcessorArchitecture)' == 'x86'">true</Is32Bit>
+    <Is64Bit>false</Is64Bit>
+    <Is64Bit Condition="'$(MachineProcessorArchitecture)' == 'AMD64'">true</Is64Bit>
+  </PropertyGroup>
+
+  <!-- Use node.exe on x86 and node64.exe on x64 -->
+  <PropertyGroup Condition="'$(Is64Bit)' == 'true'">
+    <node_exe>64</node_exe>
+  </PropertyGroup>
+  <PropertyGroup>
+    <node_exe>&quot;$(ProjectDir)..\Build\npm\node$(node_exe).exe&quot;</node_exe>
+    <HandlebarsModule>&quot;$(ProjectDir)..\Build\npm\node_modules\handlebars\bin\handlebars&quot;</HandlebarsModule>
+  </PropertyGroup>
+
+  <!-- Detect if running on AppHarbor -->
+  <PropertyGroup>
+    <AppHarbor>false</AppHarbor>
+    <AppHarbor Condition="$(USERNAME.StartsWith(apphb))">true</AppHarbor>
+  </PropertyGroup>
+
+  <Target Name="CompileHandlebarsTemplates">
+    <Message Text="Is64Bit? $(Is64Bit)" />
+    <Message Text="node? $(node_exe)" />
+    <Message Text="AppHarbor? $(AppHarbor)" />
+
+    <!-- Exclude template files from getting copied to the output directory -->
+    <ItemGroup>
+      <Content Remove="$(HandlebarsTemplatesPath)\*" />
+    </ItemGroup>
+
+    <!-- Create output directory -->
+    <ItemGroup>
+      <HandlebarsOutputFile Include="$(HandlebarsOutputFile)" />
+    </ItemGroup>
+    <MakeDir Directories="%(HandlebarsOutputFile.Directory)" />
+
+    <!-- Compile Handlebars -->
+    <Message Text="Compiling Handlebars template files" />
+    <Message Text="Executing handlebars $(HandlebarsBuildConfigurations) $(HandlebarsTemplatesPath)" />
+    <Exec Command="$(node_exe) $(HandlebarsModule) $(HandlebarsBuildConfigurations) $(HandlebarsTemplatesPath)" IgnoreExitCode="false" />
+  </Target>
+  
+  <Import Project="$(ProjectDir)..\Build\SystemTest.targets" />
+</Project>

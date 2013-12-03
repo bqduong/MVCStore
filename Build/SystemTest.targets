@@ -1,0 +1,22 @@
+﻿<!--
+***********************************************************************************************
+This MSBuild target is used for detecting the build machine's properties.
+***********************************************************************************************
+-->
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <CompileDependsOn>
+      ShowEnvironmentVariables;
+      $(CompileDependsOn);
+    </CompileDependsOn>
+  </PropertyGroup>
+  
+  <Target Name="ShowEnvironmentVariables">
+    <Message Text="Environment Variables:" />
+    <Exec Command="set" />
+    <Message Text="What is the working dir?" />
+    <Exec Command="CD" />
+  </Target>
+  
+</Project>

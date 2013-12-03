@@ -1,0 +1,1 @@
+!function(){var a=Handlebars.template,e=Handlebars.templates=Handlebars.templates||{};e["navigation-bar-template"]=a(function(a,e,t,r,l){return this.compilerInfo=[4,">= 1.0.0"],t=this.merge(t,a.helpers),l=l||{},'<li class="dashboard-select"><a href="#">Store</a></li>\r\n<h1>NavigationBarTemplate</h1>'})}();

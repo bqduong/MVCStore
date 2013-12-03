@@ -1,11 +1,15 @@
 ﻿@using System.Web.Optimization
 @using MVCStore.Helpers
 
-        @* Include these scripts on top. *@
-        @Html.Scripts(Url.Content("~/Scripts/"), new[] {
+@* Include these scripts on top. *@
+@Html.Scripts(Url.Content("~/Scripts/"), new[] {
         //"jquery-ui",
         //"bootstrap",
-        //"underscore",
+        "underscore",
+        "jquery-2.0.3",
+        "handlebars-v1.1.2",
         "backbone",
-        "handlebars-v1.1.2"
-    })
+        })       
+@Html.Scripts(Url.Content("~/Scripts/site/"), new[] {
+        "site",
+        "navigation-panel-view"})
