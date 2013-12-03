@@ -2,7 +2,7 @@
 
 var Site = (function ($, Backbone, Handlebars) {
     var initializeApp = function(baseUrl) {
-        var navigationPanelView = new NavigationPanelView({ el: "#mode-tabs" });
+        var navigationPanelView = new NavigationPanelView({ el: ".site-title" });
         navigationPanelView.render();
     };
 
@@ -15,7 +15,7 @@ var Site = (function ($, Backbone, Handlebars) {
             var template = "";
             if (Handlebars.templates) {
                 var temp = Handlebars.templates[name + "-template"];
-                if (!template) {
+                if (!temp) {
                     console.error("Template not found: " + name);
                 }
                 template = temp;
